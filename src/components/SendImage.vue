@@ -8,7 +8,7 @@ export default {
     name: 'SendImage',
     methods: {
         sendMessage(data, type) {
-            this.$emit('sendMessage', data, type);
+            this.$emit('sendMessage', data, type,'me');
         },
         //发送图片
         sendImage(e) {

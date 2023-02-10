@@ -6,10 +6,10 @@
             <div class="customerChatHead" :style="this.$store.state.bgColor">
                 【轮子哥】chatGPT
                 <div class="customerChatSpeed">调整打字速度<input v-model="speed" class="customerChatSpeedInput" /></div>
-                <div class="customerChatSpeed" v-on:click="isShowLogWrite =! isShowLogWrite">日志</div>
+                <div class="customerChatSpeed" v-on:click="isShowLogWrite = !isShowLogWrite">日志</div>
             </div>
 
-            <LogWrite v-show="isShowLogWrite" @isClose="isShowLogWrite =! isShowLogWrite"></LogWrite>
+            <LogWrite v-show="isShowLogWrite" @isClose="isShowLogWrite = !isShowLogWrite"></LogWrite>
 
             <!--聊天内容-->
             <MessageWindow id="RightCont" :messageList="messageList" class="customerChatMessage">
@@ -63,9 +63,10 @@ export default {
             netCount: 0,
             footHit: '...请耐心等待,轮子哥正在为你火速加载中...',
             sendData: '',
-            oldSendData:'',
-            speed: 250,
-            isShowLogWrite:false
+            oldSendData: '',
+            speed: 110,
+            isShowLogWrite: false,
+            loadLoop:function(){}
         }
     },
     mounted() {
@@ -77,36 +78,55 @@ export default {
         },
 
         ajax(sendMessage) {
-            let params = { max_tokens: 4048, model: "text-davinci-003" , stream:true };
+            let params = { max_tokens: 4048, model: "text-davinci-003", stream: true };
             params.prompt = sendMessage;
+            this.typingGoBack();
             axios({
                 method: 'post',
                 url: 'https://api.openai.com/v1/completions',
                 data: params
             }).then((response) => {
+                this.messageList[this.messageList.length - 1].message = '';
+                clearInterval(this.loadLoop);
                 this.allowSession = true;
-                let text;
-                if(response.data.choices[0].text.slice(0,2)===`\n\n`){
-                    // console.log("是") 
-                    text = response.data.choices[0].text.slice(3,-1).replace(/\n\n/g,'<br>    ');
-                }else{
-                    // console.log("否",response.data.choices[0].text.slice(0,2))
-                    text = response.data.choices[0].text.replace(/\n\n/g,'<br>    ');
-                }
-                let obj = {}
-                obj.sendType = 1;
-                obj.sendPeople = 'other';
-                obj.message = '';
-                this.messageList.push(obj);
+                this.netCount = 0;
+                this.footHit = '...请耐心等待,轮子哥正在为你火速加载中...';
+                this.oldSendData = '';
 
-                this.footHit= '...请耐心等待,轮子哥正在为你火速加载中...',
-                this.oldSendData='';
+                //stream: true 开启控制流，进入循环打字，凸(艹皿艹 )，回复时间貌似没有变化，白改了
+                let responseFinish;
+                let responseByte;
+                var index = 0;
+                var textLoop = setInterval(() => {
+                    //分割转json再提取数据，开启控制流后需要循环获取
+                    responseByte = JSON.parse(response.data.slice(5, -1).split("data:")[index]).choices[0].text;
+                    console.log(responseByte)
+                    this.messageList[this.messageList.length - 1].message += responseByte;
+                    //结束
+                    responseFinish = JSON.parse(response.data.slice(5, -1).split("data:")[index]).choices[0].finish_reason;
+                    if (responseFinish === "stop") {
+                        clearInterval(textLoop);
+                    }
+                    index++;
+                    if (index % 20 == 0) {
+                        this.toBottom(128)
+                    }
+                }, 100);
 
-                this.typing(text);
+                //stream: false 关闭控制流，
+                // let text = response.data.choices[0].text.slice(0, 2)
+                // if (response.data.choices[0].text.slice(0, 2) === `\n\n`) {
+                //     console.log("是", response.data.choices[0].text.slice(0, 2))
+                //     text = response.data.choices[0].text.slice(2, -1).replace(/\n\n/g, '<br>    ');
+                // } else {
+                //     console.log("否", response.data.choices[0].text.slice(0, 2))
+                //     text = response.data.choices[0].text.replace(/\n\n/g, '<br>    ');
+                // }
+                // //打印
+                // this.typing(text);
 
-                this.toBottom(128)
-                console.log(JSON.stringify(response))
             }).catch(error => {
+                clearInterval(this.loadLoop);
                 this.$toast("请检查网络设置或耐心等待刷新，如果多次刷新依然无法连接成功请联系轮子哥");
                 if (this.netCount <= 5) {
                     this.netCount = this.netCount + 1;
@@ -136,15 +156,19 @@ export default {
             obj.sendPeople = sendPeople;
             obj.message = '';
             this.messageList.push(obj);
-            this.typing(data);
+            if (sendType === 1) {
+                this.typing(data);
+            } else {
+                obj.message = data;
+                this.$toast("chatGPT当前暂时无法接收图片，请等待官网更新")
+            }
             this.allowSession = false;
-            this.oldSendData=this.sendData;
+            this.oldSendData = this.sendData;
             this.sendData = '';
             this.ajax(data);
-            //让聊天窗口回到底部
-            this.toBottom(128)
         },
 
+        //文字打印
         typing(text) {
             var messageLength = this.messageList.length - 1;
             var contentArr = text.split("");
@@ -159,34 +183,29 @@ export default {
                     this.messageList[messageLength].message = content;
                     clearInterval(ID);
                 }
+                if (index % 20 == 0) {
+                    this.toBottom(128)
+                }
             }, this.speed);
         },
 
-        typingGoBack(isGoBack) {
-            var messageLength = this.messageList.length - 1;
+        typingGoBack(){
             let obj = {}
             obj.sendType = 1;
             obj.sendPeople = 'other';
             obj.message = '';
             this.messageList.push(obj);
             var index = 0;
-            var ID = setInterval(() => {
-                if (index % 2 == 0) {
-                    this.messageList[messageLength].message = "|";
-                } else {
-                    this.messageList[messageLength].message = "~";
-                }
-                if (isGoBack) {
-                    if (messageLength != this.messageList.length) {
-                        this.messageList.splice(messageLength, 1)
-                    }
-                    clearInterval(ID);
+            this.loadLoop = setInterval(() => {
+                switch (index % 4) {
+                    case 1: this.messageList[this.messageList.length - 1].message = "☆"; break;
+                    case 2: this.messageList[this.messageList.length - 1].message = "★"; break;
+                    case 3: this.messageList[this.messageList.length - 1].message = "♡"; break;
+                    case 4: this.messageList[this.messageList.length - 1].message = "♥"; break;
                 }
                 index++;
-            }, this.speed);
-
+            }, 250);
         },
-
 
         //回到底部
         toBottom(time) {

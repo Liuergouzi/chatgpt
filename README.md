@@ -1,24 +1,20 @@
 # chatgpt
 
-## Project setup
-```
+----------------------------------------------------------------------------
+![截图1](https://47image.oss-cn-heyuan.aliyuncs.com/github/chatgpt/1.png)
+----------------------------------------------------------------------------
+![截图2](https://47image.oss-cn-heyuan.aliyuncs.com/github/chatgpt/2.png)
+----------------------------------------------------------------------------
+
+运行之前先到src\main.js里边替换apikey
+
+安装依赖
 npm install
-```
 
-### Compiles and hot-reloads for development
-```
+运行
 npm run serve
-```
 
-### Compiles and minifies for production
-```
+打包
 npm run build
-```
 
-### Lints and fixes files
-```
-npm run lint
-```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).

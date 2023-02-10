@@ -4,7 +4,7 @@ import router from './router'
 import store from './store'
 
 import axios from 'axios'
-axios.defaults.headers={ 'content-type': 'application/json', 'Authorization': 'Bearer ' + '你的key' }	//	请求数据的json主体编码
+axios.defaults.headers={ 'content-type': 'application/json', 'Authorization': 'Bearer ' + '你的apikey' }	//	请求数据的json主体编码
 
 //按需引入vant
 import 'vant/lib/index.css'

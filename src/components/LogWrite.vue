@@ -1,9 +1,18 @@
 <template>
 
-    <div class="logBody" v-show="isShow">
+    <div class="logBody">
+        <br />
+        <div class="logClose" v-on:click="close">x</div>
+        <br />
         <div class="logText">
-            <div class="logClose" v-on:click="close">x</div>
-            <br />
+            <div>
+                <div class="logTime">2023/2/11 2:27</div>
+                <hr />
+                1、修改图片显示，chatGPT大多回复的图片是无法访问的，因此仅处理了自己发送的图片进行显示，功能预留等待官网更新<br />
+                2、修改了控制流<br />
+                3、增加等待闪烁<br />
+                4、修复回滚到页面底部的小bug<br />
+            </div>
 
             <div>
                 <div class="logTime">2023/2/8 20:12</div>
@@ -39,8 +48,8 @@ export default {
         }
     },
     methods: {
-        close(){
-            this.$emit('isClose',false)
+        close() {
+            this.$emit('isClose', false)
         }
     },
     watch: {
@@ -63,12 +72,16 @@ export default {
 }
 
 .logText {
-    padding: 10px;
+    height: 100%;
     display: list-item;
+    overflow-y: scroll;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 .logClose {
     float: right;
+    padding-right: 15px;
 }
 
 .logTime {
