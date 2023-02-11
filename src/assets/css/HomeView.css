@@ -25,7 +25,16 @@
     justify-content: space-evenly;
 }
 
-.customerChatSpeed{
+.customerChatLogWrite{
+    font-size: 16px;
+    text-align: center;
+    color: #0ea1ed;
+    text-decoration: underline;
+    background-color: #e2f3f6;
+    height: 25px;
+    border-radius: 20px;
+}
+.customerChatCenterText{
     font-size: 12px;
 }
 .customerChatSpeedInput{
@@ -107,6 +116,16 @@
     bottom: 10px;
     right: 10px;
     color: white;
+}
+
+.custom-button {
+    width: 26px;
+    color: #fff;
+    font-size: 10px;
+    line-height: 18px;
+    text-align: center;
+    background-color: var(--van-primary-color);
+    border-radius: 100px;
 }
 
 /**分辨率适配**/

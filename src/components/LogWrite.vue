@@ -1,10 +1,19 @@
 <template>
 
     <div class="logBody">
-        <br />
+
         <div class="logClose" v-on:click="close">x</div>
-        <br />
+      
         <div class="logText">
+            <br>
+            <div>
+                <div class="logTime">2023/2/11 17:12</div>
+                <hr />
+                1、修复小bug<br />
+                2、修复不能上下文联系<br />
+            </div>
+
+            <br />
             <div>
                 <div class="logTime">2023/2/11 2:27</div>
                 <hr />
@@ -14,6 +23,7 @@
                 4、修复回滚到页面底部的小bug<br />
             </div>
 
+            <br />
             <div>
                 <div class="logTime">2023/2/8 20:12</div>
                 <hr />
@@ -24,7 +34,6 @@
             </div>
 
             <br />
-
             <div>
                 <div class="logTime">2023/2/8 7:56</div>
                 <hr />
@@ -62,26 +71,28 @@ export default {
 .logBody {
     position: absolute;
     background-color: #c9f6ea;
-    z-index: 999;
+    z-index: 99999;
     width: 70%;
     height: 70%;
     left: 25%;
     top: 55px;
-    box-shadow: 1px 1px 10px 10px #f8f3f3;
+    box-shadow: 1px 1px 10px 2px #f8f3f3;
     border-radius: 10px;
+    overflow-y: hidden;
 }
 
 .logText {
     height: 100%;
     display: list-item;
     overflow-y: scroll;
-    padding-left: 10px;
+    padding-top: 10px;
+    padding-left: 20px;
     padding-right: 10px;
 }
 
 .logClose {
     float: right;
-    padding-right: 15px;
+    margin: 10px;
 }
 
 .logTime {
