@@ -128,6 +128,13 @@
     border-radius: 100px;
 }
 
+.van-popup--right{
+    position:absolute !important;
+}
+.van-overlay{
+    position:absolute !important;
+}
+
 /**分辨率适配**/
 @media screen and (max-width: 500px) {
     .customerChat {
